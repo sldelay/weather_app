@@ -1,0 +1,53 @@
+h2 {
+    font-size: 1.5em;
+}
+
+span {
+    margin-right: .5em;
+}
+
+span.cityName {
+    font-size: 2em;
+}
+
+span.date {
+    font-size: 1.5em;
+}
+
+
+nav > div.nav-wrapper {
+    background-color: grey; 
+}
+
+body > div.container {
+    margin-top: 2em;
+}
+
+div.input-field {
+    margin-top: 2em;
+}
+
+div.row > div.sideNav.col {
+    color: black;
+}
+
+div.row > div.currentDisplay.col {
+    color: black;
+}
+
+div.row > div.fiveDisplay.col {
+    color: black;
+}
+
+
+div.row.main {
+    min-height: 40em;
+    background-color: lightgray;
+}
+
+.dayBox {
+    margin-top: 1em;
+    margin-right: 1em;
+    height: 10em;
+    background-color: grey;
+}
