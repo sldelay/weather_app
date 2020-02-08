@@ -19,53 +19,57 @@
 <body>
     <nav>
         <div class="nav-wrapper">
+            <a href="#" class="brand-logo center">Weather</a>
         </div>
     </nav>
-    <div class="container">
-        <div class="row main">
-            <div class="sideNav col s12 m6 l4 offset-m3 center-align">
-                <form>
-                    <div class="row">
-                        <div class="input-field col s12 m8 offset-m2">
-                            <input placeholder="City Name" id="input_text" type="text">
-                            <label for="input_text">Location</label>
-                        </div>
-                        <div class="input-field col s12 m8 offset-m2">
-                            <select class="stateSelect">
-                                <option value="" disabled selected>Select State</option>
-                            </select>
-                        </div>
-                        <a class="waves-effect waves-light btn search">Search</a>
-                    </div>
-                </form>
-                <ul class="recentCities">
-
-                </ul>
-            </div>
-            <div class="weatherDisplay col s12 m12 l8">
+    <!-- <div class="container"> -->
+    <div class="row main">
+        <div class="sideNav col s12 m6 l3 center-align">
+            <form>
                 <div class="row">
-                    <div class="currentDisplay col s12 l11">
-                        <div class="row">
-                            <h1 class="cityName"></h1>
-                            <span class="date"></span>
-                            <ul>
-                                <li class="temp"></li>
-                                <li class="humidity"></li>
-                                <li class="wind"></li>
-                                <li class="uvIndex"></li>
-                            </ul>
-                        </div>
+                    <div class="input-field col s12 m8 offset-m2">
+                        <input placeholder="" id="input_text" type="text">
+                        <label class="searchLabel" for="input_text">Search for a city:</label>
+                    </div>
+                    <div class="input-field col s12 m8 offset-m2">
+                        <select class="stateSelect">
+                            <option value="" disabled selected>Select State</option>
+                        </select>
+                    </div>
+                    <a class="waves-effect waves-light btn search">Search</a>
+                </div>
+            </form>
+            <ul class="recentCities col s8 offset-s2">
+
+            </ul>
+        </div>
+        <div class="weatherDisplay col s12 m12 l9">
+            <div class="row">
+                <div class="currentDisplay col s12 l11">
+                    <div class="row">
+                        <h1 class="cityName">--</h1>
+                        <p class="date">--</p>
+                        <img class="currIcon" src="">
+                        <ul>
+                            <li class="temp">Temperature:</li>
+                            <li class="humidity">Humidity:</li>
+                            <li class="wind">Wind:</li>
+                            <li class="uvIndex">UV Index:</li>
+                        </ul>
                     </div>
                 </div>
-                <div class="row">
-                    <div class="fiveDisplay col s12 m10 offset-m1">
-                        <div class="row fiveRow">
-                        </div>
+            </div>
+            <div class="row">
+                <h5>Five Day Forecast:</h5>
+                <div class="fiveDisplay col s12 m11 offset-m1 l12">
+                    <div class="row fiveRow">
+
                     </div>
                 </div>
             </div>
         </div>
     </div>
+    <!-- </div> -->
     <script src="https://cdn.jsdelivr.net/npm/moment@2.24.0/moment.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
