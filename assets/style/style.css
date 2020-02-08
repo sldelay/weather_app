@@ -9,11 +9,7 @@ body, html {
 }
 
 body {
-    background-image: url("Images/ishan-seefromthesky-eWSh-bkaKU8-unsplash.jpg");
-    -webkit-background-size: cover;
-    -moz-background-size: cover;
-    -o-background-size: cover;
-    background-size: cover;
+    background-color: lightgrey;
 }
 
 label.searchLabel {
