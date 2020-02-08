@@ -1,3 +1,33 @@
+h1.cityName {
+    font-size: 2.5em;
+    margin-bottom: 0;
+    margin-top: .5em;
+}
+
+body, html {
+    height: 100vh;
+}
+
+body {
+    background-image: url("Images/ishan-seefromthesky-eWSh-bkaKU8-unsplash.jpg");
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+}
+
+label.searchLabel {
+    color: black;
+    font-size: 1.5em;
+}
+
+div.row > div.currentDisplay {
+    background-color: white;
+    padding: 1em 1em 1em 2em;
+    margin-top: 1em;
+    margin-right: 1em;
+}
+
 h2 {
     font-size: 1.5em;
 }
@@ -6,17 +36,13 @@ span {
     margin-right: .5em;
 }
 
-span.cityName {
-    font-size: 2em;
-}
-
-span.date {
+p.date p.boxDate{
     font-size: 1.5em;
 }
 
 
 nav > div.nav-wrapper {
-    background-color: grey; 
+    background-color: black; 
 }
 
 body > div.container {
@@ -41,13 +67,23 @@ div.row > div.fiveDisplay.col {
 
 
 div.row.main {
+    margin-top: 2em;
     min-height: 40em;
-    background-color: lightgray;
+    background-color: white;
+    width: 90vw;
+    border-radius: .5em;
 }
 
 .dayBox {
-    margin-top: 1em;
-    margin-right: 1em;
-    height: 10em;
-    background-color: grey;
+    margin-top: .5em;
+    margin-right: .5em;
+    background-color: #EEDAFA;
+    border-radius: .25em;
+}
+
+.recentList {
+    background-color: #B28EC9;
+    padding: .25em;
+    margin-bottom: .25em;
+    border-radius: .25em;
 }
