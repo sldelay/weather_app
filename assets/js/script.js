@@ -32,7 +32,8 @@ $(function () {
     $(document).on("click", ".recentList", function () {
         let newFirst = $(this).text();
         recentCities.unshift(newFirst);
-        localStorage.setItem("cityArray", JSON.stringify(recentCities))
+        let storageArray = recentCities.filter((item, index) => recentCities.indexOf(item) === index);
+        localStorage.setItem("cityArray", JSON.stringify(storageArray))
         displayCurrentWeather(recentCities);
     })
 
@@ -70,8 +71,7 @@ $(function () {
                 recentCities.unshift(`${city}, ${state}`)
             }
 
-            localStorage.setItem("cityArray", JSON.stringify(recentCities))
-
+            localStorage.setItem("cityArray", JSON.stringify(recentCities));
 
             displayCurrentWeather(recentCities)
 
@@ -165,7 +165,7 @@ $(function () {
                         url: fiveURL,
                         method: "GET"
                     }).then((response) => {
-                        for (i = 3; i < response.list.length; i += 8) {
+                        for (i = 1; i < response.list.length; i += 8) {
                             let day = response.list[i];
                             let icon = day.weather[0].icon;
                             let iconurl = `http://openweathermap.org/img/w/${icon}.png`;
