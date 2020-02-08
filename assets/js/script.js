@@ -2,6 +2,7 @@ $(function () {
 
     let recentCities = []
 
+
     let getCities = function () {
         recentCities = JSON.parse(localStorage.getItem("cityArray"));
         if (!recentCities) {
@@ -9,6 +10,32 @@ $(function () {
         }
     };
     getCities()
+
+    let displayRecent = function () {
+        if (!recentCities) {
+            return;
+        }
+
+        let displayArray = recentCities.filter((item, index) => recentCities.indexOf(item) === index);
+
+        displayArray.forEach(function (item) {
+            let newLiEl = $("<li>");
+            newLiEl.text(item);
+            newLiEl.addClass("recentList");
+            $(".recentCities").append(newLiEl);
+        })
+
+    }
+
+
+
+    $(document).on("click", ".recentList", function () {
+        let newFirst = $(this).text();
+        recentCities.unshift(newFirst);
+        localStorage.setItem("cityArray", JSON.stringify(recentCities))
+        displayCurrentWeather(recentCities);
+    })
+
 
 
 
@@ -47,6 +74,8 @@ $(function () {
 
 
             displayCurrentWeather(recentCities)
+
+            $("#input_text").val(" ")
         })
     }
     citySearch()
@@ -58,19 +87,19 @@ $(function () {
         let split = str.split(" ")
         let newS = split[0].split("-")
         let newForm = `${newS[1]}/${newS[2]}/${newS[0]}`
-        
+
         return newForm;
     }
 
-    let displayCurrDate = function(num) {
-        return moment.unix(num).format("MM/DD/YY");
-       
-    } 
+    let displayCurrDate = function (num) {
+        return moment.unix(num).format("MM/DD/YYYY");
+
+    }
 
     let formatTemp = function (temp) {
         return (temp - 273.15) * 1.80 + 32;
     }
-    
+
 
     let formatWind = function (wind) {
         return (wind * 2.24);
@@ -78,6 +107,8 @@ $(function () {
 
 
     let displayCurrentWeather = function (arr) {
+        $(".recentCities").empty()
+        $(".fiveRow").empty()
 
         let lat;
         let long;
@@ -91,63 +122,84 @@ $(function () {
         let myCity = split[0].split(" ").join("%20")
         let state = split[1].replace(" ", "")
         let searchID = `${myCity}%2C%20${state}`
-        console.log(searchID)
 
         const myURL = "https://api.opencagedata.com/geocode/v1/json?q=" + searchID + "&key=83c4661294e14018ac85ea3a5a9b5ffd&language=en&pretty=1"
-        console.log(myURL)
-
-        // $.ajax({
-        //     url: myURL,
-        //     method: "GET"
-        // }).then(function (response) {
-            // lat = response.results[0].bounds.northeast.lat
-            // long = response.results[0].bounds.northeast.lng
-
-            let city = recentCities[0];
-            const queryURL = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${long}&appid=b39417425b9299cc61c63ff3f32ab962`
-
-            // $.ajax({
-            //     url: queryURL,
-            //     method: "GET"
-            // }).then((response) => {
-
-                $(".cityName").text(city);
-                $(".date").text(displayCurrDate(data.dt))
-                $(".temp").text(`Temperature: ${Math.round(formatTemp(data.main.temp))} ${String.fromCharCode(176)}F`)
-                $(".humidity").text(`Humidity: ${data.main.humidity}%`)
-                $(".wind").text(`Wind Speed: ${Math.round(formatWind(data.wind.speed))} MPH`)
-                $(".uvIndex").text(`Feels Like: ${Math.round(formatTemp(data.main.feels_like))} ${String.fromCharCode(176)}F`)
-
-                const fiveURL = `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${long}&appid=b39417425b9299cc61c63ff3f32ab962`
-                
-                // $.ajax({
-                //     url: fiveURL,
-                //     method: "GET"
-                // }).then((response) => {
-                    // console.log(response)
-                    for (i = 0; i < datafive.list.length; i += 8) {
-                        let day = datafive.list[i];
-                        let icon = day.weather[0].icon;
-                        let iconurl = `http://openweathermap.org/img/w/${icon}.png`;
-                        let box = $("<div>").addClass("dayBox col s12 m5 l5")
-                        $(".fiveRow").append(box) 
-                        let pEl = $("<p>").text(displayDate(day.dt_txt))
-                        box.append(pEl)
-                        let imgEl = $("<img>");
-                        let ulEl = $("<ul>");
-
-                        
-                    }
 
 
-                // })
+        $.ajax({
+            url: myURL,
+            method: "GET"
+        }).then(function (response) {
+            lat = response.results[0].bounds.northeast.lat
+            long = response.results[0].bounds.northeast.lng
 
-            // })
+            const uvURL = `https://api.openweathermap.org/data/2.5/uvi?appid=b39417425b9299cc61c63ff3f32ab962&lat=${lat}&lon=${long}`
 
-    // })
+            $.ajax({
+                url: uvURL,
+                method: "GET"
+            }).then(function (response) {
+                $(".uvIndex").text(`UV Index: ${response.value}`);
+
+                let city = recentCities[0];
+                const queryURL = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${long}&appid=b39417425b9299cc61c63ff3f32ab962`
+
+                $.ajax({
+                    url: queryURL,
+                    method: "GET"
+                }).then((response) => {
+
+                    let currI = response.weather[0].icon;
+                    let iurl = `http://openweathermap.org/img/w/${currI}.png`;
+
+                    $(".cityName").text(city);
+                    $(".date").text(displayCurrDate(response.dt))
+                    $(".currIcon").attr("src", iurl)
+                    $(".temp").text(`Temperature: ${Math.round(formatTemp(response.main.temp))} ${String.fromCharCode(176)}F`)
+                    $(".humidity").text(`Humidity: ${response.main.humidity}%`)
+                    $(".wind").text(`Wind Speed: ${Math.round(formatWind(response.wind.speed))} MPH`)
+
+                    const fiveURL = `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${long}&appid=b39417425b9299cc61c63ff3f32ab962`
+
+                    $.ajax({
+                        url: fiveURL,
+                        method: "GET"
+                    }).then((response) => {
+                        for (i = 3; i < response.list.length; i += 8) {
+                            let day = response.list[i];
+                            let icon = day.weather[0].icon;
+                            let iconurl = `http://openweathermap.org/img/w/${icon}.png`;
+                            let box = $("<div>")
+                            $(".fiveRow").append(box)
+                            box.addClass(`dayBox col s12 m5 l2`)
+                            let pEl = $("<p>").text(displayDate(day.dt_txt))
+                            box.append(pEl)
+                            let imgEl = $("<img>");
+                            imgEl.attr("src", iconurl);
+                            box.append(imgEl);
+                            let ulEl = $("<ul>");
+                            box.append(ulEl);
+                            let li1 = $("<li>")
+                            li1.text(`Temperature: ${Math.round(formatTemp(day.main.temp))} ${String.fromCharCode(176)}F`)
+                            ulEl.append(li1)
+                            let li2 = $("<li>")
+                            li2.text(`Humidity: ${day.main.humidity}%`)
+                            ulEl.append(li2)
+                        }
+
+
+                    })
+
+                })
 
 
 
+            })
+
+        })
+
+
+        displayRecent()
     }
     displayCurrentWeather(recentCities);
 
