@@ -1,9 +1,9 @@
 $(function () {
 
-    let recentCities = []
+    let recentCities = [] //set an empty array to be used throughout
 
 
-    let getCities = function () {
+    let getCities = function () { // gets cities from localStorage
         recentCities = JSON.parse(localStorage.getItem("cityArray"));
         if (!recentCities) {
             localStorage.setItem("cityArray", JSON.stringify(recentCities));
@@ -11,7 +11,7 @@ $(function () {
     };
     getCities()
 
-    let displayRecent = function () {
+    let displayRecent = function () { // displays recent cities under search button
         if (!recentCities) {
             return;
         }
@@ -29,7 +29,7 @@ $(function () {
 
 
 
-    $(document).on("click", ".recentList", function () {
+    $(document).on("click", ".recentList", function () { // displays locations weather if recent city is clicked
         let newFirst = $(this).text();
         recentCities.unshift(newFirst);
         let storageArray = recentCities.filter((item, index) => recentCities.indexOf(item) === index);
@@ -40,7 +40,7 @@ $(function () {
 
 
 
-    let stateOptions = function () {
+    let stateOptions = function () { // sets my state options in the dropdown
         states.forEach(function (item, index) {
             let newOpt = $("<option>");
             newOpt.attr("value", index);
@@ -52,14 +52,14 @@ $(function () {
 
     $('select').formSelect();
 
-    let citySearch = function () {
+    let citySearch = function () { // formats the city once it is searched 
         $(".search").on("click", function () {
             if (($("li.selected").text()) === "Select State") {
-                alert("dumb")
+                alert("Please select a state!")
                 return;
             }
             if (!$("#input_text").val()) {
-                alert("dumb")
+                alert("Please enter a valid city!")
                 return;
             }
             let city = $("#input_text").val()
@@ -73,6 +73,7 @@ $(function () {
 
             localStorage.setItem("cityArray", JSON.stringify(recentCities));
 
+            displayRecent()
             displayCurrentWeather(recentCities)
 
             $("#input_text").val(" ")
@@ -82,7 +83,7 @@ $(function () {
 
 
 
-    let displayDate = function (num) {
+    let displayDate = function (num) { // displays the correct date for five day forecast
         let str = `${num}`
         let split = str.split(" ")
         let newS = split[0].split("-")
@@ -91,115 +92,117 @@ $(function () {
         return newForm;
     }
 
-    let displayCurrDate = function (num) {
+    let displayCurrDate = function (num) { // displays the correct date for current weather
         return moment.unix(num).format("MM/DD/YYYY");
 
     }
 
-    let formatTemp = function (temp) {
+    let formatTemp = function (temp) { // formats temp
         return (temp - 273.15) * 1.80 + 32;
     }
 
 
-    let formatWind = function (wind) {
+    let formatWind = function (wind) { // formats wind speed
         return (wind * 2.24);
     }
 
 
-    let displayCurrentWeather = function (arr) {
-        $(".recentCities").empty()
-        $(".fiveRow").empty()
-
-        let lat;
-        let long;
-
-        if (!arr) {
-            alert("dumb")
+    let displayCurrentWeather = function (arr) { // displays current weather and five day forecast
+        if (recentCities === null) {
             return;
-        }
-        let str = recentCities[0]
-        let split = str.split(",")
-        let myCity = split[0].split(" ").join("%20")
-        let state = split[1].replace(" ", "")
-        let searchID = `${myCity}%2C%20${state}`
-
-        const myURL = "https://api.opencagedata.com/geocode/v1/json?q=" + searchID + "&key=83c4661294e14018ac85ea3a5a9b5ffd&language=en&pretty=1"
-
-
-        $.ajax({
-            url: myURL,
-            method: "GET"
-        }).then(function (response) {
-            lat = response.results[0].bounds.northeast.lat
-            long = response.results[0].bounds.northeast.lng
-
-            const uvURL = `https://api.openweathermap.org/data/2.5/uvi?appid=b39417425b9299cc61c63ff3f32ab962&lat=${lat}&lon=${long}`
-
+        } else {
+            $(".recentCities").empty()
+            $(".fiveRow").empty()
+    
+            let lat;
+            let long;
+    
+            let str = arr[0]
+            let split = str.split(",")
+            let myCity = split[0].split(" ").join("%20")
+            let state = split[1].replace(" ", "")
+            let searchID = `${myCity}%2C%20${state}`
+    
+            const myURL = "https://api.opencagedata.com/geocode/v1/json?q=" + searchID + "&key=83c4661294e14018ac85ea3a5a9b5ffd&language=en&pretty=1"
+    
+    
             $.ajax({
-                url: uvURL,
+                url: myURL,
                 method: "GET"
             }).then(function (response) {
-                $(".uvIndex").text(`UV Index: ${response.value}`);
-
-                let city = recentCities[0];
-                const queryURL = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${long}&appid=b39417425b9299cc61c63ff3f32ab962`
-
+                lat = response.results[0].bounds.northeast.lat
+                long = response.results[0].bounds.northeast.lng
+    
+                const uvURL = `https://api.openweathermap.org/data/2.5/uvi?appid=b39417425b9299cc61c63ff3f32ab962&lat=${lat}&lon=${long}`
+    
                 $.ajax({
-                    url: queryURL,
+                    url: uvURL,
                     method: "GET"
-                }).then((response) => {
-
-                    let currI = response.weather[0].icon;
-                    let iurl = `http://openweathermap.org/img/w/${currI}.png`;
-
-                    $(".cityName").text(city);
-                    $(".date").text(displayCurrDate(response.dt))
-                    $(".currIcon").attr("src", iurl)
-                    $(".temp").text(`Temperature: ${Math.round(formatTemp(response.main.temp))} ${String.fromCharCode(176)}F`)
-                    $(".humidity").text(`Humidity: ${response.main.humidity}%`)
-                    $(".wind").text(`Wind Speed: ${Math.round(formatWind(response.wind.speed))} MPH`)
-
-                    const fiveURL = `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${long}&appid=b39417425b9299cc61c63ff3f32ab962`
-
+                }).then(function (response) {
+                    $(".uvIndex").text(`UV Index: ${response.value}`);
+    
+                    let city = recentCities[0];
+                    const queryURL = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${long}&appid=b39417425b9299cc61c63ff3f32ab962`
+    
                     $.ajax({
-                        url: fiveURL,
+                        url: queryURL,
                         method: "GET"
                     }).then((response) => {
-                        for (i = 1; i < response.list.length; i += 8) {
-                            let day = response.list[i];
-                            let icon = day.weather[0].icon;
-                            let iconurl = `http://openweathermap.org/img/w/${icon}.png`;
-                            let box = $("<div>")
-                            $(".fiveRow").append(box)
-                            box.addClass(`dayBox col s12 m5 l2`)
-                            let pEl = $("<p>").text(displayDate(day.dt_txt))
-                            box.append(pEl)
-                            let imgEl = $("<img>");
-                            imgEl.attr("src", iconurl);
-                            box.append(imgEl);
-                            let ulEl = $("<ul>");
-                            box.append(ulEl);
-                            let li1 = $("<li>")
-                            li1.text(`Temperature: ${Math.round(formatTemp(day.main.temp))} ${String.fromCharCode(176)}F`)
-                            ulEl.append(li1)
-                            let li2 = $("<li>")
-                            li2.text(`Humidity: ${day.main.humidity}%`)
-                            ulEl.append(li2)
-                        }
-
-
+    
+                        let currI = response.weather[0].icon;
+                        let iurl = `http://openweathermap.org/img/w/${currI}.png`;
+    
+                        $(".cityName").text(city);
+                        $(".date").text(displayCurrDate(response.dt))
+                        $(".currIcon").attr("src", iurl)
+                        $(".temp").text(`Temperature: ${Math.round(formatTemp(response.main.temp))} ${String.fromCharCode(176)}F`)
+                        $(".humidity").text(`Humidity: ${response.main.humidity}%`)
+                        $(".wind").text(`Wind Speed: ${Math.round(formatWind(response.wind.speed))} MPH`)
+    
+                        const fiveURL = `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${long}&appid=b39417425b9299cc61c63ff3f32ab962`
+    
+                        $.ajax({
+                            url: fiveURL,
+                            method: "GET"
+                        }).then((response) => {
+                            for (i = 1; i < response.list.length; i += 8) {
+                                let day = response.list[i];
+                                let icon = day.weather[0].icon;
+                                let iconurl = `http://openweathermap.org/img/w/${icon}.png`;
+                                let box = $("<div>")
+                                $(".fiveRow").append(box)
+                                box.addClass(`dayBox col s12 m5 l2`)
+                                let pEl = $("<p>").text(displayDate(day.dt_txt))
+                                box.append(pEl)
+                                let imgEl = $("<img>");
+                                imgEl.attr("src", iconurl);
+                                box.append(imgEl);
+                                let ulEl = $("<ul>");
+                                box.append(ulEl);
+                                let li1 = $("<li>")
+                                li1.text(`Temperature: ${Math.round(formatTemp(day.main.temp))} ${String.fromCharCode(176)}F`)
+                                ulEl.append(li1)
+                                let li2 = $("<li>")
+                                li2.text(`Humidity: ${day.main.humidity}%`)
+                                ulEl.append(li2)
+                            }
+    
+    
+                        })
+    
                     })
-
+    
+    
+    
                 })
-
-
-
+    
             })
+    
+    
+            displayRecent()
 
-        })
+        }
 
-
-        displayRecent()
     }
     displayCurrentWeather(recentCities);
 
