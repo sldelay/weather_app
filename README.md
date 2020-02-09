@@ -1,7 +1,7 @@
 # weather_app
 UNH Bootcamp Week 6 HW
 
-![alt text](assets/style/images/screenshot.png) 
+![alt text](screenshot.png) 
 
 Link to live website: (https://sldelay.github.io/weather_app/)
 
