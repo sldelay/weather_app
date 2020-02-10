@@ -150,7 +150,7 @@ $(function () {
                     }).then((response) => {
     
                         let currI = response.weather[0].icon;
-                        let iurl = `http://openweathermap.org/img/w/${currI}.png`;
+                        let iurl = `https://openweathermap.org/img/w/${currI}.png`;
     
                         $(".cityName").text(city);
                         $(".date").text(displayCurrDate(response.dt))
@@ -168,7 +168,7 @@ $(function () {
                             for (i = 1; i < response.list.length; i += 8) {
                                 let day = response.list[i];
                                 let icon = day.weather[0].icon;
-                                let iconurl = `http://openweathermap.org/img/w/${icon}.png`;
+                                let iconurl = `https://openweathermap.org/img/w/${icon}.png`;
                                 let box = $("<div>")
                                 $(".fiveRow").append(box)
                                 box.addClass(`dayBox col s12 m5 l2`)
